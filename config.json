@@ -1,0 +1,16 @@
+{
+  "build": [{
+    "type": "page",
+    "path": "index.html",
+    "title": "Katie Clark",
+    "description": "Data Scientist / Developer with a passion for ethics and a love of silly humour",
+    "keywords": "data science, blog, katie clark, python, javascript, developer, machine learning, deep learning"
+  },
+  {
+    "type": "page",
+    "path": "about/index.html",
+    "title": "About Me",
+    "description": "Currently off on an adventure, living out of 7kg cabin luggage and traveling the world.  I left permanent employment in April 2018 after 9 years working with code and have started this blog",
+    "keywords": "developer, javascript, data science, blog, katie clark, python"
+  }]
+}
