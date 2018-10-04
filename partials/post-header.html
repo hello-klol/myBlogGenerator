@@ -1,0 +1,31 @@
+<link itemprop="mainEntityOfPage" href="http://hello-klol.github.io/{{path}}/">
+<span hidden="" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+  <meta itemprop="name" content="Katie Clark">
+  <meta itemprop="description" content="It's a Data Science blog">
+  <meta itemprop="image" content="/images/avatar.gif">
+</span>
+<span>
+  <meta itemprop="name" content="Come with me now on a journey through code and data...">
+</span>
+<header class="post-header" style="opacity: 1; display: block; transform: translateY(0px);">
+  <h1 class="post-title" itemprop="name headline">{{title}}</h1>
+  <div class="post-meta">
+    <span class="post-time">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-calendar-o"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+      <time title="Created: {{date}} 00:00:00" itemprop="dateCreated datePublished" datetime="{{date}}T00:00:00Z">{{date}}</time>
+    </span>
+    <span class="post-comments-count">
+      <span class="post-meta-divider">|</span>
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <a href="{{path}}/#comments" itemprop="discussionUrl">
+        <span class="post-comments-count disqus-comment-count" data-disqus-identifier="{{path}}/" itemprop="commentCount"></span>
+      </a>
+    </span>
+    <div class="post-description">{{description}}</div>
+  </div>
+</header>
