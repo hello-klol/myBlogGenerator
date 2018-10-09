@@ -1,0 +1,1477 @@
+<div id="notebook" class="js-html">
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[1]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">scipy.stats</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>I've recently been working with some data that requires multi-indexing for manipulation and have had more than enough head-scratching moments. So here is my write-up of lessons learned that can be returned to anytime so I don't have to learn all these lessons again.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>First I'll generate a simple DataFrame with a two-layered multi-index. Then I'll perform some grouping, joining, and reindexing manipulations that I've needed during my project.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[2]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">arrays</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="s1">'A'</span><span class="p">,</span> <span class="s1">'A'</span><span class="p">,</span> <span class="s1">'A'</span><span class="p">,</span> <span class="s1">'B'</span><span class="p">,</span> <span class="s1">'B'</span><span class="p">,</span> <span class="s1">'C'</span><span class="p">,</span> <span class="s1">'C'</span><span class="p">,</span> <span class="s1">'C'</span><span class="p">,</span> <span class="s1">'D'</span><span class="p">]),</span>
+          <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="s1">'1'</span><span class="p">,</span> <span class="s1">'2'</span><span class="p">,</span> <span class="s1">'3'</span><span class="p">,</span> <span class="s1">'1'</span><span class="p">,</span> <span class="s1">'2'</span><span class="p">,</span> <span class="s1">'1'</span><span class="p">,</span> <span class="s1">'2'</span><span class="p">,</span> <span class="s1">'3'</span><span class="p">,</span> <span class="s1">'1'</span><span class="p">])]</span>
+
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="n">index</span><span class="o">=</span><span class="n">arrays</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">'orig'</span><span class="p">]);</span> <span class="n">df</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+<div class="prompt output_prompt">Out[2]:</div>
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+
+<table border="1" class="dataframe">
+  <thead>
+    <tr>
+      <th></th>
+      <th></th>
+      <th>orig</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th rowspan="3" valign="top">A</th>
+      <th>1</th>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th rowspan="2" valign="top">B</th>
+      <th>1</th>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th rowspan="3" valign="top">C</th>
+      <th>1</th>
+      <td>2</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>4</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>2</td>
+    </tr>
+    <tr>
+      <th>D</th>
+      <th>1</th>
+      <td>0</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3>Mean<a class="anchor-link" href="#Mean">¶</a>
+</h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Something I needed to do a fair amount was group the data by it's top level index and generate the mean for the group. I then had to fiddle around to join this top-level grouping back to my original DataFrame. Turns out none of this was necessary and can be achieved in one quick swoop like so:</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[3]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">df</span><span class="p">[</span><span class="s1">'mean'</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">'orig'</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">reindex</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="mi">0</span><span class="p">);</span> <span class="n">df</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+<div class="prompt output_prompt">Out[3]:</div>
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+
+<table border="1" class="dataframe">
+  <thead>
+    <tr>
+      <th></th>
+      <th></th>
+      <th>orig</th>
+      <th>mean</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th rowspan="3" valign="top">A</th>
+      <th>1</th>
+      <td>0</td>
+      <td>0.666667</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>1</td>
+      <td>0.666667</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>1</td>
+      <td>0.666667</td>
+    </tr>
+    <tr>
+      <th rowspan="2" valign="top">B</th>
+      <th>1</th>
+      <td>1</td>
+      <td>1.000000</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>1</td>
+      <td>1.000000</td>
+    </tr>
+    <tr>
+      <th rowspan="3" valign="top">C</th>
+      <th>1</th>
+      <td>2</td>
+      <td>2.666667</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>4</td>
+      <td>2.666667</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>2</td>
+      <td>2.666667</td>
+    </tr>
+    <tr>
+      <th>D</th>
+      <th>1</th>
+      <td>0</td>
+      <td>0.000000</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3>Sum<a class="anchor-link" href="#Sum">¶</a>
+</h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><code>sum</code> also takes a <code>level</code> argument and performs the grouping without need for a <code>groupby</code>.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[4]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">df</span><span class="p">[</span><span class="s1">'sum'</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">'orig'</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">reindex</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="mi">0</span><span class="p">);</span> <span class="n">df</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+<div class="prompt output_prompt">Out[4]:</div>
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+
+<table border="1" class="dataframe">
+  <thead>
+    <tr>
+      <th></th>
+      <th></th>
+      <th>orig</th>
+      <th>mean</th>
+      <th>sum</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th rowspan="3" valign="top">A</th>
+      <th>1</th>
+      <td>0</td>
+      <td>0.666667</td>
+      <td>2</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>1</td>
+      <td>0.666667</td>
+      <td>2</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>1</td>
+      <td>0.666667</td>
+      <td>2</td>
+    </tr>
+    <tr>
+      <th rowspan="2" valign="top">B</th>
+      <th>1</th>
+      <td>1</td>
+      <td>1.000000</td>
+      <td>2</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>1</td>
+      <td>1.000000</td>
+      <td>2</td>
+    </tr>
+    <tr>
+      <th rowspan="3" valign="top">C</th>
+      <th>1</th>
+      <td>2</td>
+      <td>2.666667</td>
+      <td>8</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>4</td>
+      <td>2.666667</td>
+      <td>8</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>2</td>
+      <td>2.666667</td>
+      <td>8</td>
+    </tr>
+    <tr>
+      <th>D</th>
+      <th>1</th>
+      <td>0</td>
+      <td>0.000000</td>
+      <td>0</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3>Mode<a class="anchor-link" href="#Mode">¶</a>
+</h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Pandas doesn't have a builtin operation to get the mode of groups as far as I'm aware, but it can be achieved using the <code>agg</code> function and the method from scipy. The operation is pretty slow and not without issues (e.g. cases where there are multiple modes) but for my use case it worked fine.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The function <code>agg</code> doesn't accept an argument about the grouping level like the previous two examples. From this point on we need to perform the grouping first before applying any aggregation calculation.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[5]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">df</span><span class="p">[</span><span class="s1">'mode'</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">'orig'</span><span class="p">]</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">agg</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">scipy</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">mode</span><span class="p">(</span><span class="n">x</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">reindex</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="mi">0</span><span class="p">);</span> <span class="n">df</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+<div class="prompt output_prompt">Out[5]:</div>
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+
+<table border="1" class="dataframe">
+  <thead>
+    <tr>
+      <th></th>
+      <th></th>
+      <th>orig</th>
+      <th>mean</th>
+      <th>sum</th>
+      <th>mode</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th rowspan="3" valign="top">A</th>
+      <th>1</th>
+      <td>0</td>
+      <td>0.666667</td>
+      <td>2</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>1</td>
+      <td>0.666667</td>
+      <td>2</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>1</td>
+      <td>0.666667</td>
+      <td>2</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th rowspan="2" valign="top">B</th>
+      <th>1</th>
+      <td>1</td>
+      <td>1.000000</td>
+      <td>2</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>1</td>
+      <td>1.000000</td>
+      <td>2</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th rowspan="3" valign="top">C</th>
+      <th>1</th>
+      <td>2</td>
+      <td>2.666667</td>
+      <td>8</td>
+      <td>2</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>4</td>
+      <td>2.666667</td>
+      <td>8</td>
+      <td>2</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>2</td>
+      <td>2.666667</td>
+      <td>8</td>
+      <td>2</td>
+    </tr>
+    <tr>
+      <th>D</th>
+      <th>1</th>
+      <td>0</td>
+      <td>0.000000</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3>NUnique<a class="anchor-link" href="#NUnique">¶</a>
+</h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Here's an example to get the number of unique values in a grouping and join it back onto the original multi-indexed DataFrame:</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[6]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">df</span><span class="p">[</span><span class="s1">'nunique'</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">'orig'</span><span class="p">]</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">nunique</span><span class="p">())</span><span class="o">.</span><span class="n">reindex</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="mi">0</span><span class="p">);</span> <span class="n">df</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+<div class="prompt output_prompt">Out[6]:</div>
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+
+<table border="1" class="dataframe">
+  <thead>
+    <tr>
+      <th></th>
+      <th></th>
+      <th>orig</th>
+      <th>mean</th>
+      <th>sum</th>
+      <th>mode</th>
+      <th>nunique</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th rowspan="3" valign="top">A</th>
+      <th>1</th>
+      <td>0</td>
+      <td>0.666667</td>
+      <td>2</td>
+      <td>1</td>
+      <td>2</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>1</td>
+      <td>0.666667</td>
+      <td>2</td>
+      <td>1</td>
+      <td>2</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>1</td>
+      <td>0.666667</td>
+      <td>2</td>
+      <td>1</td>
+      <td>2</td>
+    </tr>
+    <tr>
+      <th rowspan="2" valign="top">B</th>
+      <th>1</th>
+      <td>1</td>
+      <td>1.000000</td>
+      <td>2</td>
+      <td>1</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>1</td>
+      <td>1.000000</td>
+      <td>2</td>
+      <td>1</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th rowspan="3" valign="top">C</th>
+      <th>1</th>
+      <td>2</td>
+      <td>2.666667</td>
+      <td>8</td>
+      <td>2</td>
+      <td>2</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>4</td>
+      <td>2.666667</td>
+      <td>8</td>
+      <td>2</td>
+      <td>2</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>2</td>
+      <td>2.666667</td>
+      <td>8</td>
+      <td>2</td>
+      <td>2</td>
+    </tr>
+    <tr>
+      <th>D</th>
+      <th>1</th>
+      <td>0</td>
+      <td>0.000000</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3>Size<a class="anchor-link" href="#Size">¶</a>
+</h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Now the size or "count" of instances in each grouping:</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[7]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">df</span><span class="p">[</span><span class="s1">'size'</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">size</span><span class="p">()</span><span class="o">.</span><span class="n">reindex</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="mi">0</span><span class="p">);</span> <span class="n">df</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+<div class="prompt output_prompt">Out[7]:</div>
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+
+<table border="1" class="dataframe">
+  <thead>
+    <tr>
+      <th></th>
+      <th></th>
+      <th>orig</th>
+      <th>mean</th>
+      <th>sum</th>
+      <th>mode</th>
+      <th>nunique</th>
+      <th>size</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th rowspan="3" valign="top">A</th>
+      <th>1</th>
+      <td>0</td>
+      <td>0.666667</td>
+      <td>2</td>
+      <td>1</td>
+      <td>2</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>1</td>
+      <td>0.666667</td>
+      <td>2</td>
+      <td>1</td>
+      <td>2</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>1</td>
+      <td>0.666667</td>
+      <td>2</td>
+      <td>1</td>
+      <td>2</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th rowspan="2" valign="top">B</th>
+      <th>1</th>
+      <td>1</td>
+      <td>1.000000</td>
+      <td>2</td>
+      <td>1</td>
+      <td>1</td>
+      <td>2</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>1</td>
+      <td>1.000000</td>
+      <td>2</td>
+      <td>1</td>
+      <td>1</td>
+      <td>2</td>
+    </tr>
+    <tr>
+      <th rowspan="3" valign="top">C</th>
+      <th>1</th>
+      <td>2</td>
+      <td>2.666667</td>
+      <td>8</td>
+      <td>2</td>
+      <td>2</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>4</td>
+      <td>2.666667</td>
+      <td>8</td>
+      <td>2</td>
+      <td>2</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>2</td>
+      <td>2.666667</td>
+      <td>8</td>
+      <td>2</td>
+      <td>2</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>D</th>
+      <th>1</th>
+      <td>0</td>
+      <td>0.000000</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3>First<a class="anchor-link" href="#First">¶</a>
+</h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[8]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">df</span><span class="p">[</span><span class="s1">'first'</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">'orig'</span><span class="p">]</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span><span class="o">.</span><span class="n">reindex</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="mi">0</span><span class="p">);</span> <span class="n">df</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+<div class="prompt output_prompt">Out[8]:</div>
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+
+<table border="1" class="dataframe">
+  <thead>
+    <tr>
+      <th></th>
+      <th></th>
+      <th>orig</th>
+      <th>mean</th>
+      <th>sum</th>
+      <th>mode</th>
+      <th>nunique</th>
+      <th>size</th>
+      <th>first</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th rowspan="3" valign="top">A</th>
+      <th>1</th>
+      <td>0</td>
+      <td>0.666667</td>
+      <td>2</td>
+      <td>1</td>
+      <td>2</td>
+      <td>3</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>1</td>
+      <td>0.666667</td>
+      <td>2</td>
+      <td>1</td>
+      <td>2</td>
+      <td>3</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>1</td>
+      <td>0.666667</td>
+      <td>2</td>
+      <td>1</td>
+      <td>2</td>
+      <td>3</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th rowspan="2" valign="top">B</th>
+      <th>1</th>
+      <td>1</td>
+      <td>1.000000</td>
+      <td>2</td>
+      <td>1</td>
+      <td>1</td>
+      <td>2</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>1</td>
+      <td>1.000000</td>
+      <td>2</td>
+      <td>1</td>
+      <td>1</td>
+      <td>2</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th rowspan="3" valign="top">C</th>
+      <th>1</th>
+      <td>2</td>
+      <td>2.666667</td>
+      <td>8</td>
+      <td>2</td>
+      <td>2</td>
+      <td>3</td>
+      <td>2</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>4</td>
+      <td>2.666667</td>
+      <td>8</td>
+      <td>2</td>
+      <td>2</td>
+      <td>3</td>
+      <td>2</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>2</td>
+      <td>2.666667</td>
+      <td>8</td>
+      <td>2</td>
+      <td>2</td>
+      <td>3</td>
+      <td>2</td>
+    </tr>
+    <tr>
+      <th>D</th>
+      <th>1</th>
+      <td>0</td>
+      <td>0.000000</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3>Align<a class="anchor-link" href="#Align">¶</a>
+</h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[9]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">df2</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">4</span><span class="p">),</span> <span class="n">index</span><span class="o">=</span><span class="p">[</span><span class="s1">'A'</span><span class="p">,</span><span class="s1">'B'</span><span class="p">,</span><span class="s1">'C'</span><span class="p">,</span><span class="s1">'D'</span><span class="p">],</span> <span class="n">name</span><span class="o">=</span><span class="s1">'align'</span><span class="p">);</span> <span class="n">df2</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+<div class="prompt output_prompt">Out[9]:</div>
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>A   -0.614518
+B    0.335981
+C   -1.092953
+D   -0.200379
+Name: align, dtype: float64</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[10]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">a1</span><span class="p">,</span> <span class="n">a2</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">align</span><span class="p">(</span><span class="n">df2</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">);</span> <span class="n">a2</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+<div class="prompt output_prompt">Out[10]:</div>
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>A  1   -0.614518
+   2   -0.614518
+   3   -0.614518
+B  1    0.335981
+   2    0.335981
+C  1   -1.092953
+   2   -1.092953
+   3   -1.092953
+D  1   -0.200379
+Name: align, dtype: float64</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><code>a1</code> is the original DataFrame (<code>df</code>) and <code>a2</code> is the Series which has been reindexed to match the original DataFrame.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>You could also use <code>reindex</code> again like the following:</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[11]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">df2</span><span class="o">.</span><span class="n">reindex</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+<div class="prompt output_prompt">Out[11]:</div>
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>A  1   -0.614518
+   2   -0.614518
+   3   -0.614518
+B  1    0.335981
+   2    0.335981
+C  1   -1.092953
+   2   -1.092953
+   3   -1.092953
+D  1   -0.200379
+Name: align, dtype: float64</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3>Update or FillNA<a class="anchor-link" href="#Update-or-FillNA">¶</a>
+</h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>I had a case during data manipulation where one column was missing data. I was able to fill in missing data by performing a calculation on data from another column. However, in some cases this other column was missing data where the calculatable column was not. This meant that if I performed the calculation, then replaced all values, I would lose some data.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[25]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">arrays</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="s1">'A'</span><span class="p">,</span> <span class="s1">'A'</span><span class="p">,</span> <span class="s1">'A'</span><span class="p">,</span> <span class="s1">'B'</span><span class="p">,</span> <span class="s1">'B'</span><span class="p">,</span> <span class="s1">'C'</span><span class="p">,</span> <span class="s1">'C'</span><span class="p">,</span> <span class="s1">'C'</span><span class="p">,</span> <span class="s1">'D'</span><span class="p">]),</span>
+          <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="s1">'1'</span><span class="p">,</span> <span class="s1">'2'</span><span class="p">,</span> <span class="s1">'3'</span><span class="p">,</span> <span class="s1">'1'</span><span class="p">,</span> <span class="s1">'2'</span><span class="p">,</span> <span class="s1">'1'</span><span class="p">,</span> <span class="s1">'2'</span><span class="p">,</span> <span class="s1">'3'</span><span class="p">,</span> <span class="s1">'1'</span><span class="p">])]</span>
+
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="kc">None</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="kc">None</span><span class="p">,</span><span class="kc">None</span><span class="p">],</span> <span class="n">index</span><span class="o">=</span><span class="n">arrays</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">'orig'</span><span class="p">]);</span> <span class="n">df</span>
+<span class="n">df</span><span class="p">[</span><span class="s1">'sum'</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">([</span><span class="mi">4</span><span class="p">,</span><span class="kc">None</span><span class="p">,</span><span class="kc">None</span><span class="p">,</span><span class="mi">3</span><span class="p">],</span> <span class="n">index</span><span class="o">=</span><span class="p">[</span><span class="s1">'A'</span><span class="p">,</span><span class="s1">'B'</span><span class="p">,</span><span class="s1">'C'</span><span class="p">,</span><span class="s1">'D'</span><span class="p">])</span><span class="o">.</span><span class="n">reindex</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="mi">0</span><span class="p">);</span> <span class="n">df</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+<div class="prompt output_prompt">Out[25]:</div>
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+
+<table border="1" class="dataframe">
+  <thead>
+    <tr>
+      <th></th>
+      <th></th>
+      <th>orig</th>
+      <th>sum</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th rowspan="3" valign="top">A</th>
+      <th>1</th>
+      <td>0.0</td>
+      <td>4.0</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>NaN</td>
+      <td>4.0</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>1.0</td>
+      <td>4.0</td>
+    </tr>
+    <tr>
+      <th rowspan="2" valign="top">B</th>
+      <th>1</th>
+      <td>1.0</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>1.0</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th rowspan="3" valign="top">C</th>
+      <th>1</th>
+      <td>2.0</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>4.0</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>D</th>
+      <th>1</th>
+      <td>NaN</td>
+      <td>3.0</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Imagine the missing value in <code>A</code> was 3, or that there were other rows missing from this data that meant the value for <code>sum</code> is really correct.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Here we want to fill in the values for <code>B</code> and <code>C</code> without overwriting the values for <code>A</code> or <code>D</code> as these cannot be recalculated using the data we are given.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[26]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">replacement</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="o">~</span><span class="n">df</span><span class="p">[</span><span class="s1">'orig'</span><span class="p">]</span><span class="o">.</span><span class="n">isnull</span><span class="p">()][</span><span class="s1">'orig'</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">reindex</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="mi">0</span><span class="p">);</span> <span class="n">replacement</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+<div class="prompt output_prompt">Out[26]:</div>
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>A  1    1.0
+   2    1.0
+   3    1.0
+B  1    2.0
+   2    2.0
+C  1    6.0
+   2    6.0
+   3    6.0
+D  1    NaN
+Name: orig, dtype: float64</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><code>fillna</code> will only update values in the original series where they are already <code>None</code> - it won't overwrite existing values. This way we can keep the value for <code>A</code> and <code>D</code> and only update the missing cases that we need.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[27]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">df</span><span class="p">[</span><span class="s1">'sum'</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">'sum'</span><span class="p">]</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="n">replacement</span><span class="p">);</span> <span class="n">df</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+<div class="prompt output_prompt">Out[27]:</div>
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+
+<table border="1" class="dataframe">
+  <thead>
+    <tr>
+      <th></th>
+      <th></th>
+      <th>orig</th>
+      <th>sum</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th rowspan="3" valign="top">A</th>
+      <th>1</th>
+      <td>0.0</td>
+      <td>4.0</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>NaN</td>
+      <td>4.0</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>1.0</td>
+      <td>4.0</td>
+    </tr>
+    <tr>
+      <th rowspan="2" valign="top">B</th>
+      <th>1</th>
+      <td>1.0</td>
+      <td>2.0</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>1.0</td>
+      <td>2.0</td>
+    </tr>
+    <tr>
+      <th rowspan="3" valign="top">C</th>
+      <th>1</th>
+      <td>2.0</td>
+      <td>6.0</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>4.0</td>
+      <td>6.0</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>NaN</td>
+      <td>6.0</td>
+    </tr>
+    <tr>
+      <th>D</th>
+      <th>1</th>
+      <td>NaN</td>
+      <td>3.0</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Now instead imagine that we know the value for <code>A</code> is wrong and we want to overwrite it using our new calculation. Since the original data fro <code>D</code> is missing we're going to rely on the fact that it's correct and don't want to overwrite that. So we want to update values for <code>A</code>, <code>B</code>, and <code>C</code>. Using update will overwrite the existing values where our new series is not <code>None</code>. This is done "inplace".</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[28]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">df</span><span class="p">[</span><span class="s1">'sum'</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">replacement</span><span class="p">);</span> <span class="n">df</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+<div class="prompt output_prompt">Out[28]:</div>
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+
+<table border="1" class="dataframe">
+  <thead>
+    <tr>
+      <th></th>
+      <th></th>
+      <th>orig</th>
+      <th>sum</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th rowspan="3" valign="top">A</th>
+      <th>1</th>
+      <td>0.0</td>
+      <td>1.0</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>NaN</td>
+      <td>1.0</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>1.0</td>
+      <td>1.0</td>
+    </tr>
+    <tr>
+      <th rowspan="2" valign="top">B</th>
+      <th>1</th>
+      <td>1.0</td>
+      <td>2.0</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>1.0</td>
+      <td>2.0</td>
+    </tr>
+    <tr>
+      <th rowspan="3" valign="top">C</th>
+      <th>1</th>
+      <td>2.0</td>
+      <td>6.0</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>4.0</td>
+      <td>6.0</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>NaN</td>
+      <td>6.0</td>
+    </tr>
+    <tr>
+      <th>D</th>
+      <th>1</th>
+      <td>NaN</td>
+      <td>3.0</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>These <code>fillna</code> and <code>update</code> functions aren't anything special to <em>MultiIndexed</em> DataFrames, this demonstration to myself is more to show the full workflow once the recalculated Series has been properly indexed to align with what we're filling or updating. None of these calculations will work if the new Series is only indexed at the higher level, and sometimes the code doesn't even throw errors so you won't know that it's failed.</p>
+
+</div>
+</div>
+</div>
+ 
+
+</div>

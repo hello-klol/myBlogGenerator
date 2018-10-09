@@ -47,7 +47,6 @@ const generator = partials => template => obj => {
     content: fs.readFileSync(inputPath).toString()
   }), partials) 
   fs.outputFileSync(outputPath, output)
-
 }
 
 const makeGenerator = generator(partials);
