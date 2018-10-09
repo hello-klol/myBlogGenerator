@@ -1,12 +1,11 @@
 <html>
   <head>
-    {{> default-head}}
+    {{> head-meta}}
+    {{> post-head-meta}}
     <title>{{title}}</title>
   </head>
   <body>
     {{> header}}
-    <div id="content">
-      {{{content}}}
-    </div>
+    {{> post}}
   </body>
 </html>

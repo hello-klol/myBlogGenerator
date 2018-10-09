@@ -1,0 +1,74 @@
+.header {
+  margin:0 auto;
+  padding:50px 0 20px;
+  width:700px;
+}
+@media (min-width: 1200px){
+.header {
+  width:800px;
+  }
+}
+@media (min-width: 1600px){
+.header {
+  width:900px;
+  }
+}
+.title-bar {
+  margin:0 auto;
+  padding:0 40px;
+  color:#fff;
+  background:#222;
+  text-align:center;
+}
+.site-title {
+  vertical-align:top;
+  line-height:36px;
+  font-size:20px;
+  font-weight:normal;
+  font-family:'Lato', "PingFang SC", "Microsoft YaHei", sans-serif;
+}
+.site-nav {
+  text-align:center;
+}
+@media (min-width: 768px) and (max-width: 991px){
+  .site-nav{display:block!important;}
+  }
+@media (min-width: 992px){
+  .site-nav{display:block!important;}
+}
+.nav-item {
+  display:inline-block;
+  margin:0 10px;
+  list-style:none;
+}
+@media screen and (max-width: 767px){
+.nav-item{
+  margin-top:10px;
+  }
+}
+.nav-item a {
+  display:block;
+  font-size:13px;
+  line-height:inherit;
+  border-bottom:1px solid transparent;
+}
+.nav-item a:hover {
+  border-bottom-color:#222;
+}
+/*! CSS Used from: https://hello-klol.github.io/lib/font-awesome/css/font-awesome.min.css?v=4.6.2 */
+.fa {
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+}
+.fa-fw{width:1.28571429em;text-align:center;}
+.fa-user:before{content:"\f007";}
+.fa-home:before{content:"\f015";}
+.fa-book:before{content:"\f02d";}
+.fa-chevron-left:before{content:"\f053";}
+.fa-arrow-up:before{content:"\f062";}
+.fa-twitter:before{content:"\f099";}
+.fa-comment-o:before{content:"\f0e5";}
+.fa-github-alt:before{content:"\f113";}
+.fa-calendar-o:before{content:"\f133";}
+.fa-stack-overflow:before{content:"\f16c";}
+.fa-child:before{content:"\f1ae";}

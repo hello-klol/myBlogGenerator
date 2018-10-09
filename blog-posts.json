@@ -1,0 +1,24 @@
+{
+  "blog-posts": [{
+    "type": "article",
+    "date": "2018-08-04",
+    "path": "Data-Science-Project-Workflow",
+    "title": "Data Science Project Workflow",
+    "description": "Outline of project workflow for a Data Science project. How to structure your research project so you don't miss any vital steps!",
+    "keywords": "project workflow, data science, blog, katie clark, python"
+  },{
+    "type": "article",
+    "date": "2018-08-23",
+    "path": "WIP-Teaching-Reinforcement-Learning-To-My-Past-Self",
+    "title": "WIP Teaching Reinforcement Learning To My Past Self",
+    "description": "This post is an incomplete lession, written for past me - the me that existed less than a week ago",
+    "keywords": "reinforcement learning, data science, deep learning, blog, katie clark, python"
+  },{
+    "type": "notebook",
+    "date": "2018-09-01",
+    "path": "Poverty-Prediction-Kaggle-Competition-Data-Cleanup",
+    "title": "Poverty Prediction Kaggle Competition: Data Cleanup",
+    "description": "Cleaning up data provided from the Costa Rican household poverty level prediction competition",
+    "keywords": "data science, katie clark, python, kaggle, costa rica, povery prediction"
+  }]
+}
