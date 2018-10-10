@@ -8,7 +8,7 @@
 }
 .archive-move-on {
     position: absolute;
-    top: 11px;
+    top: 14px;
     left: 0;
     margin-left: -6px;
     width: 10px;
@@ -51,7 +51,7 @@
 }
 .archive-posts .post-title {
     margin-left: 60px;
-    font-size: 16px;
+    font-size: 17px;
     font-weight: normal;
     line-height: inherit;
 }
