@@ -28,23 +28,12 @@
   font-family:'Lato', "PingFang SC", "Microsoft YaHei", sans-serif;
 }
 .site-nav {
-  text-align:center;
-}
-@media (min-width: 768px) and (max-width: 991px){
-  .site-nav{display:block!important;}
-  }
-@media (min-width: 992px){
-  .site-nav{display:block!important;}
+  text-align: center;
 }
 .nav-item {
   display:inline-block;
   margin:0 10px;
   list-style:none;
-}
-@media screen and (max-width: 767px){
-.nav-item{
-  margin-top:10px;
-  }
 }
 .nav-item a {
   display:block;
