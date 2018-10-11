@@ -1,5 +1,6 @@
 const fs = require('fs-extra')
 const path = require('path')
+const find = require('find')
 const Mustache = require('mustache')
 const moment = require('moment')
 const cheerio = require('cheerio')
@@ -9,10 +10,15 @@ var postTemplate = fs.readFileSync(path.join(__dirname,'templates/post.mustache'
 Mustache.parse(postTemplate)
 
 
-// Load partial files into vars
-// TODO: replace below with loading file names from partials dir
 console.log('Loading partials...')
-partialFiles = ['blog-post', 'archive','archive-head-meta', 'head-meta','post-head-meta','post','header','post-meta','post-header','post-footer']
+// Load partial files into an array of filenames
+const partialFiles = fs.readdirSync('./partials/').reduce((partials, file) => {
+  const ext = path.extname(file)
+  if (ext=='.mustache') {
+    return partials.concat(path.basename(file, ext))
+  }
+  return partials
+}, [])
 
 function getPartialTemplate(partialFileName) {
   return fs.readFileSync(path.join(__dirname, 'partials', `${partialFileName}.mustache`)).toString();
@@ -23,7 +29,7 @@ function addPartialTemplate(obj, partialFileName) {
     [partialFileName]: getPartialTemplate(partialFileName) 
   });
 }
-
+// Convert array of partial filenames into object containing templates
 const partials = partialFiles.reduce(addPartialTemplate, {})
 
 
@@ -33,9 +39,13 @@ console.log('Generating blog posts...')
 const generator = partials => template => (obj, i, arr) => {
   prev = arr[i+1]
   next = arr[i-1]
-  
-  var datePath = obj.date.replace(/-/g,'/')
+
+  // Content might be .html or .md - need to convert if .md
   inputPath  = path.join(__dirname, 'source', 'blog',   obj.path, 'index.html')
+  // TODO: find index and maybe convert
+  // Hosted path is based on date published:
+  var datePath = obj.date.replace(/-/g,'/')
+  console.log(datePath)
   outputPath = path.join(__dirname, 'public', datePath, obj.path, 'index.html')
   
   var content = fs.readFileSync(inputPath).toString()

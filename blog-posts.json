@@ -1,5 +1,12 @@
 {
   "blog-posts": [{
+    "type": "notebook",
+    "date": "2018-10-11",
+    "path": "Promises-Promises",
+    "title": "Promises Promises",
+    "description": "Asyncronous and synchronous Javascript examples and how to write Promises",
+    "keywords": "katie clark, javascript, asynchronous, synchronous, promise"
+  },{
     "type": "article",
     "date": "2018-10-03",
     "path": "Atari-Breakout-In-JavaScript",
