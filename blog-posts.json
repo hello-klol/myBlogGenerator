@@ -1,6 +1,13 @@
 {
   "blog-posts": [{
     "type": "notebook",
+    "date": "2018-10-13",
+    "path": "JavaScript-Array-Methods",
+    "title": "JavaScript Array Methods",
+    "description": "Map, Reduce, Filter, Flatten and other things you can do with JavaScript arrays",
+    "keywords": "katie clark, javascript, map, reduce, map reduce, filter, flatten, arrays"
+  },{
+    "type": "notebook",
     "date": "2018-10-11",
     "path": "Promises-Promises",
     "title": "Promises Promises",
