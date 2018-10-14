@@ -2,6 +2,13 @@
   "blog-posts": [{
     "type": "notebook",
     "date": "2018-10-14",
+    "path": "JavaScript-Strings-To-Variable-Names",
+    "title": "JavaScript Strings To Variable Names",
+    "description": "A little trick I used in my blog generator code that I may need reminding of in future",
+    "keywords": "katie clark, javascript"
+  },{
+    "type": "notebook",
+    "date": "2018-10-14",
     "path": "JavaScript-Iterables-And-Generators",
     "title": "JavaScript Iterables And Generators",
     "description": "Building iterable functions and objects in JavaScript",
