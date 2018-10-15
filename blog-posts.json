@@ -2,6 +2,13 @@
   "blog-posts": [{
     "type": "notebook",
     "date": "2018-10-15",
+    "path": "My-Python-Setup-And-More",
+    "title": "My Python Setup and More",
+    "description": "My virtualenv setup and using Jupyter Notebooks with Python, JavaScript, and Bash",
+    "keywords": "katie clark, javascript, python, virtualenv, bash, jupyter, ipython"
+  },{
+    "type": "notebook",
+    "date": "2018-10-15",
     "path": "Building-This-Blog",
     "title": "Building This Blog",
     "description": "Fairly detailed notes about how and why I built the static site generator for this blog",
