@@ -1,6 +1,13 @@
 {
   "blog-posts": [{
     "type": "notebook",
+    "date": "2018-10-15",
+    "path": "Building-This-Blog",
+    "title": "Building This Blog",
+    "description": "Fairly detailed notes about how and why I built the static site generator for this blog",
+    "keywords": "katie clark, javascript"
+  },{
+    "type": "notebook",
     "date": "2018-10-14",
     "path": "JavaScript-Strings-To-Variable-Names",
     "title": "JavaScript Strings To Variable Names",
