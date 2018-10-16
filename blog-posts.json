@@ -1,5 +1,13 @@
 {
+
   "blog-posts": [{
+    "type": "notebook",
+    "date": "2018-10-16",
+    "path": "Reinforcement-Learning-Written-Mathematically",
+    "title": "Reinforcement Learning Written Mathematically",
+    "description": "",
+    "keywords": "katie clark, javascript, python, virtualenv, bash, jupyter, ipython"
+  },{
     "type": "notebook",
     "date": "2018-10-15",
     "path": "My-Python-Setup-And-More",
@@ -72,9 +80,9 @@
   },{
     "type": "article",
     "date": "2018-08-23",
-    "path": "WIP-Teaching-Reinforcement-Learning-To-My-Past-Self",
-    "title": "[WIP] Teaching Reinforcement Learning To My Past Self",
-    "description": "This post is an incomplete lession, written for past me - the me that existed less than a week ago",
+    "path": "Reinforcement-Learning-In-Plain-English",
+    "title": "Reinforcement Learning In Plain English",
+    "description": "A brief layman's intro to how reinforcement learning works",
     "keywords": "reinforcement learning, data science, deep learning, blog, katie clark, python"
   },{
     "type": "article",

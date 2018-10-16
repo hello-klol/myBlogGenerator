@@ -2,6 +2,9 @@
   margin: 0 auto;
   width: 700px;
 }
+.archive a {
+  text-decoration: none;
+}
 .archive-posts {
   position: relative;
   margin-left: 55px;
@@ -43,10 +46,6 @@
 }
 .archive-posts .post-header {
     position: relative;
-    transition-duration: 0.2s;
-    transition-timing-function: ease-in-out;
-    transition-delay: 0s;
-    transition-property: border;
     border-bottom: 1px dashed #ccc;
 }
 .archive-posts .post-title {
@@ -85,10 +84,6 @@
   background: #bbb;
   border-radius: 50%;
   border: 1px solid #fff;
-  transition-duration: 0.2s;
-  transition-timing-function: ease-in-out;
-  transition-delay: 0s;
-  transition-property: background;
 }
 .archive-posts .post-title::after {
   margin-left: 3px;
