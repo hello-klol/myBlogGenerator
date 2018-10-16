@@ -9,9 +9,6 @@ body {
   position: relative;
 }
 
-a {
-  background-color: transparent;
-}
 a:active,
 a:hover {
   outline: 0;
@@ -123,8 +120,6 @@ p {
 }
 a {
   color: #555;
-  text-decoration: none;
-  outline: none;
   border-bottom: 0px solid #999;
   word-wrap: break-word;
 }

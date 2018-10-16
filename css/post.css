@@ -63,6 +63,9 @@
   padding: 0;
   border: 0;
 }
+.post-body a {
+    color: #0095DD;
+}
 /*** Post Footer ***/
 .post-nav {
   display: table;
