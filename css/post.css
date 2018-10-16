@@ -63,6 +63,10 @@
   line-height: 1.7em;
   margin: 0 0 2em 0;
 }
+.post-body .sidenote {
+  color: #666;
+  font-style: italic;
+}
 .post-body .info a {
   color: #777;
 }

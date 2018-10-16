@@ -11854,8 +11854,8 @@ div#notebook {
 <li>At time step $t=0$, the environment samples the initial state $s_0 \sim p(s_0)$</li>
 <li>For $t=0$ until done (terminal state):<ul>
 <li>Agent selects an action, $a_t$</li>
-<li>Environment samples a reward, $r_t \sim \mathcal{R}( . | s_t, a_t)$</li>
-<li>Environment samples the next state, $s_{t+1} \sim \mathcal{P}( . | s_t, a_t)$</li>
+<li>Environment samples a reward, $r_t \sim R( . | s_t, a_t)$</li>
+<li>Environment samples the next state, $s_{t+1} \sim P( . | s_t, a_t)$</li>
 <li>Agent receives the reward, $r_t$, and next state, $s_{t+1}$</li>
 </ul>
 </li>
@@ -11891,6 +11891,67 @@ Find the optimal policy, $\pi*$, that maximises the cumulative (discounted) rewa
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>This objective can be formulated as:
 $$\max\sum\limits_{t \ge 0} \gamma^t r_t$$</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="What-about-randomness?">What about randomness?<a class="anchor-link" href="#What-about-randomness?">&#182;</a></h4>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>How do we handle randomness? We have randomness in terms of the initial state that we're sampling, and in terms of this transistion probability distribution that will give us distributions over next states, and so on.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>So we need to maximise the <em>expected</em> sum of rewards.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The optimal policy, $\pi*$, is the policy, $\pi$ which maximises this reward:
+$$\pi* = \arg\max_{\pi}\mathbb{E}\left[\sum\limits_{t \ge 0} \gamma^t r_t|\pi\right]$$ 
+with
+$$s_0 \sim p(s_0), a_t \sim \pi(\cdot|s_t), s_{t+1} \sim p(\cdot|s_t,a_t)$$</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p class="sidenote">Note: $\mathbb{E}$ represents the expected value of a random variable</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>We can write our optimal policy $\pi*$ as maximizing the expected sum of future rewards over
+policy's $\pi$, where</p>
+<ul>
+<li>initial state, $s_0$, is sampled from our state distribution</li>
+<li>action, $a_t$, is sampled from our policy, given the state</li>
+<li>next state, $s_{t+1}$, is sampled from our transition probability distributions</li>
+</ul>
 
 </div>
 </div>
