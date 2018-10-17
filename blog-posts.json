@@ -2,6 +2,13 @@
 
   "blog-posts": [{
     "type": "notebook",
+    "date": "2018-10-17",
+    "path": "Reinforcement-Learning-Finding-The-Optimal-Policy",
+    "title": "Reinforcement Learning Finding The Optimal Policy",
+    "description": "Calculating the optimal policy for a Reinforcement Learning problem",
+    "keywords": "katie clark, reinforcement learning, optimal policy, q value function, q-learning"
+  },{
+    "type": "notebook",
     "date": "2018-10-16",
     "path": "Reinforcement-Learning-Written-Mathematically",
     "title": "Reinforcement Learning Written Mathematically",

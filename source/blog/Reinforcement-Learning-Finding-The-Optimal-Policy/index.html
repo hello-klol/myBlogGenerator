@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head><meta charset="utf-8" />
-<title>Reinforcement Learning Written Mathematically</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
+<title>Reinforcement Learning How to find the optimal policy</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
 
 <style type="text/css">
@@ -11775,160 +11775,53 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p class="info">In the <a href="/2018/08/23/Reinforcement-Learning-In-Plain-English/" target="_blank">previous post</a> I introduced Reinforcement Learning and gave an overview of how it works in plain English. Next, let's look at how to write this definition as a mathematical problem.</p>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Mathematically-Formalising-the-Problem">Mathematically Formalising the Problem<a class="anchor-link" href="#Mathematically-Formalising-the-Problem">&#182;</a></h2>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>To solve the problem we need to define the problem! The animated loop shown below can be written using a mathematical formulation known as the Markov decision process (MDP).</p>
+<div class="recap">
+<h3>Recap</h3> 
+<p>    
+<a href="/2018/10/16/Reinforcement-Learning-Written-Mathematically/" target="_blank">Last time</a> I described the definition of Reinforcement Learning as: 
+</p>
+<p>
+Given a particular environment (or game)
+</p>
+<p>
+<span style="margin-left:20px"><i class="fa fa-fw fa-angle-double-right"></i>Find the <b>optimal function for choosing actions</b> in each state.</span>
+</p>
+<p>
+By "optimal" we mean that these actions <i>return the greatest rewards</i> 
+</p>
+<p>
+Also known as the <b>optimal policy $\pi^*$</b>, where 
 
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p><img src="/images/reinforcement/reinforcement-loop.gif" alt="The Reinforcement Learning Loop" title="Weeee"></p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>An MDP satisfies the Markov property, which is that the current state completely characterizes the state of the world. Bear with me..</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="MDP-Object-Definitions">MDP Object Definitions<a class="anchor-link" href="#MDP-Object-Definitions">&#182;</a></h3>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>An MDP is defined by tuple of objects, consisting of:</p>
-<ul>
-<li>$\mathcal{S}$, which is the <em>set of possible states</em>. </li>
-<li>$\mathcal{A}$, our <em>set of possible actions</em>.</li>
-<li>$\mathcal{R}$, our <em>distribution of our reward</em>, given a state-action pair. So it's a function mapping from state-action $\mapsto$ reward. </li>
-<li>$\mathbb{P}$, which is a <em>transition probability distribution</em> over your next state, that you're going to transition to given your state-action pair.</li>
-<li>$\gamma$, a <em>discount factor</em>, which is basically saying <em>how much we value rewards coming up soon versus later on</em>.</li>
-</ul>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="MDP-Process">MDP Process<a class="anchor-link" href="#MDP-Process">&#182;</a></h3>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<ul>
-<li>At time step $t=0$, the environment samples the initial state $s_0 \sim p(s_0)$</li>
-<li>For $t=0$ until done (terminal state):<ul>
-<li>Agent selects an action, $a_t$</li>
-<li>Environment samples a reward, $r_t \sim R( . | s_t, a_t)$</li>
-<li>Environment samples the next state, $s_{t+1} \sim P( . | s_t, a_t)$</li>
-<li>Agent receives the reward, $r_t$, and next state, $s_{t+1}$</li>
-</ul>
-</li>
-</ul>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>🚨 <strong>New lingo:</strong>
-A policy, $\pi$, is a function that specifies what action to take in each state.</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>So our objective can be redefined as:
-Find the optimal policy, $\pi^*$, that maximises the cumulative (discounted) reward.</p>
-<p>The term "discounted" is included here as we want to take into account our discount factor, $\gamma$, which balances how we value immediate vs. long term rewards.</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>This objective can be formulated as:
-$$\max\sum\limits_{t \ge 0} \gamma^t r_t$$</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h4 id="What-about-randomness?">What about randomness?<a class="anchor-link" href="#What-about-randomness?">&#182;</a></h4>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>How do we handle randomness? We have randomness in terms of the initial state that we're sampling, and in terms of this transistion probability distribution that will give us distributions over next states, and so on.</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>So we need to maximise the <em>expected</em> sum of rewards.</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>The optimal policy, $\pi^*$, is the policy which maximises this reward:
 $$\pi^* = \arg\max_{\pi}\mathbb{E}\left[\sum\limits_{t \ge 0} \gamma^t r_t|\pi\right]$$ 
-with
-$$s_0 \sim p(s_0), a_t \sim \pi(\cdot|s_t), s_{t+1} \sim p(\cdot|s_t,a_t)$$</p>
+</p>
+<p>
+Next we'll look at how to find this optimal policy.
+</p>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Definitions">Definitions<a class="anchor-link" href="#Definitions">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="Sample-Trajectories-or-Paths">Sample Trajectories or Paths<a class="anchor-link" href="#Sample-Trajectories-or-Paths">&#182;</a></h4>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>A "sample trajectory" or "path" is a route taken through the game-space. Given some initial state $s_t$, it describes every action taken, every reward given, and each new state reached, up until the terminal state.</p>
 
 </div>
 </div>
@@ -11937,7 +11830,8 @@ $$s_0 \sim p(s_0), a_t \sim \pi(\cdot|s_t), s_{t+1} \sim p(\cdot|s_t,a_t)$$</p>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p class="sidenote">Note: $\mathbb{E}$ represents the expected value of a random variable</p>
+<p>Following the actions determined by a policy gives a set of trajectories. A trajectory is something like:</p>
+
 </div>
 </div>
 </div>
@@ -11945,13 +11839,248 @@ $$s_0 \sim p(s_0), a_t \sim \pi(\cdot|s_t), s_{t+1} \sim p(\cdot|s_t,a_t)$$</p>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>We can write our optimal policy $\pi^*$ as maximizing the expected sum of future rewards over
-policy's $\Pi$, where</p>
+<p>$$s_0, a_0, r_0, s_1, a_1, r_1, ...$$</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="Value-Function">Value Function<a class="anchor-link" href="#Value-Function">&#182;</a></h4>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>We can think of the <strong>value function</strong> as a way of evaluating <strong>how good a state is</strong>. It looks at all possible trajectories from this state until the terminal state and calculates the expected cumulative reward given by following the policy.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="Q-Value-Function">Q-Value Function<a class="anchor-link" href="#Q-Value-Function">&#182;</a></h4>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The <strong>Q-value function</strong> is a way of evaluating <strong>how good a state-action pair is</strong>. As in, how good is taking a particular action in a given state? A Q-value function is the expected cumulative reward <em>from taking a specific action in a particular state</em>, and then continuing to follow the policy.</p>
+<p>So the Q-value function is the expected reward for <em>this action</em> given <em>this state</em> plus the value function for whatever state we end up in.</p>
+<p>Separating out this step for calculating the value of an action will become clear beow.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="Q*">Q*<a class="anchor-link" href="#Q*">&#182;</a></h4>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>$Q^*$ is the optimal Q-value function, it returns the <strong>maximum expected cumulative reward</strong> that we can get <strong>from a given state-action pair</strong>. So, the value from taking the best trajectory from the given state, after taking the given action.</p>
+<p>$$Q^*(s,a)=\max_{\pi}\mathbb{E}\left[\sum_{t\ge0}\gamma^{t}r_{t}|s_{0}=s,a_{0}=a,\pi\right]$$</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>As you can see this is very similar to our optimal policy function. But instead of returning the best policy, it finds the <em>best reward value</em> available from a particular point in the game.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Bellman-Equation">Bellman Equation<a class="anchor-link" href="#Bellman-Equation">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>What we are trying to solve is a Bellman Equation. A Bellman Equation writes the value of a decision problem at a certain point in time in terms of the payoff from some initial choices, and the value of the remaining decision problem that results from those initial choices.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>$Q^*$ satisfies the Bellman Equation:
+$$Q^*(s,a)=\mathbb{E}_{s' \sim \mathcal{E}}\left[r+\gamma\max_{a'}Q^*(s',a') | s,a\right]$$</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>To reiterate the Q-value definition, the value of any state-action pair can be calculated as</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<center>
+the reward that you will get get by taking this action in this state 
++
+the value of the state that you end up in (given by the value function)
+</center>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Walking through the above equation:</p>
 <ul>
-<li>initial state, $s_0$, is sampled from our state distribution</li>
-<li>action, $a_t$, is sampled from our policy, given the state</li>
-<li>next state, $s_{t+1}$, is sampled from our transition probability distributions</li>
+<li>Say we we are in state $s$ and we take action $a$.</li>
+<li>And say action $a$ puts us in the state $s'$ ("s prime")</li>
+<li>If we are calculating the optimal Q-value we know that, by definition, as we continue we're going to play the best action that we can for state $s'$ in the next timestep ($t+1$)</li>
+<li>So the Q-value of the next state-action pair, $(s', a')$, is going to have the maximum value of all possible actions, given state $s'$</li>
 </ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p class="sidenote">Note: The only way to know we are following the best possible path is to know every path available and have the ability to compare the possible rewards of different trajectories. Obviously as the state-space increases this quickly becomes infeasible. We'll go into this later. For now let's continue with this definition.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>This optimal Q-value function is a recursive sum of the reward for the current action in the current state, plus the optimal Q-value for the following state-action pair (which is the reward for the next action when applied to the next state, chosen by following an optimal policy, plus the Q-value for the next state after that).</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The definition includes an expectated value ($\mathbb{E}$) because we have randomness over what state we'll end up in.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="So-what-about-the-policy?">So what about the policy?<a class="anchor-link" href="#So-what-about-the-policy?">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>We've been talking about ways of calculating the best path or trajectory through a game from any given state which requires knowing every path available to us. But what we need is to select the policy (function that specifies what action to take given a state) that matches the best action to take in any state, as specified by $Q*$.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="Value-iteration-algorithm">Value iteration algorithm<a class="anchor-link" href="#Value-iteration-algorithm">&#182;</a></h4>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>One solution is by a value iteration algorithm, where we use the Bellman equation as an iterative update.
+$$Q_{i+1}(s,a) = \mathbb{E}\left[r+\gamma\max_{a'}Q_{i}(s',a')|s,a\right]$$
+$Q_{i} \mapsto Q^{*}$ as $i \mapsto \infty$</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>At each step, we refine our approximation of $Q^{*}$ by trying to enforce the Bellman equation. Under some mathematical conditions, we know that this sequence $Q_{i}$ of our Q-function is going to converge to our optimal $Q^{*}$ as $i$ approaches infinity.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>As mentioned above, this approach is not feasible when the state-space is too large, like in the example of an Atari game where the state space is the screen of pixels. It's not really possible to make these computations for the entire state-space, so this solution is not scalable.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="How-can-we-make-the-solution-scalable?">How can we make the solution scalable?<a class="anchor-link" href="#How-can-we-make-the-solution-scalable?">&#182;</a></h4>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Deep Learning! Yay!</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Neural networks are really good for <em>approximating</em> answers to really complex calculations. Using a function <em>approximator</em> for $Q(s,a)$  to estimate an action's value-function is called <strong>Q-Learning</strong>, and using a deep neural network for building that function approximator is called <strong>deep Q-Learning</strong>.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>More on that to come 🤗</p>
 
 </div>
 </div>
