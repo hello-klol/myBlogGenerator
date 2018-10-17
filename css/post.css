@@ -56,6 +56,15 @@
   padding: 10px 0 20px;
   font-family: 'Lato', "PingFang SC", "Microsoft YaHei", sans-serif;
 }
+.post-body .recap {
+    box-sizing: border-box;
+    color: #555;
+    background-color: #f6f6f6;
+    width: 100%;
+    outline: 1px solid #eee;
+    padding: 5px 20px 30px;
+    margin: 0;
+}
 .post-body .info {
   font-size: 13px;
   text-align: center;
@@ -67,7 +76,7 @@
   color: #666;
   font-style: italic;
 }
-.post-body .info a {
+.post-body .info a, .post-body .recap a {
   color: #777;
 }
 .post-body h2, .post-body h3 {
