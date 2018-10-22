@@ -2,6 +2,20 @@
 
   "blog-posts": [{
     "type": "notebook",
+    "date": "2018-10-22",
+    "path": "Quirky-JavaScripts-Type-Coercion-and-Comparison-Operators",
+    "title": "Quirky JavaScripts",
+    "description": "Exploring JavaScript type-coercion and comparison operators",
+    "keywords": "katie clark, javascript, type coercion, comparison operators"
+  },{
+    "type": "notebook",
+    "date": "2018-10-22",
+    "path": "Pass-By-Value-Pass-By-Reference",
+    "title": "Pass By Value, Pass By Reference",
+    "description": "Exploring JavaScript values and references",
+    "keywords": "katie clark, javascript, values, references"
+  },{
+    "type": "notebook",
     "date": "2018-10-17",
     "path": "Reinforcement-Learning-Finding-The-Optimal-Policy",
     "title": "Reinforcement Learning Finding The Optimal Policy",

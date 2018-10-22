@@ -40,3 +40,5 @@ const makeGenerator = generator(partials);
 const pageGenerator = makeGenerator(pageTemplate);
 pages.build.forEach(pageGenerator)
 
+
+// TODO: copy dirs css, images, pdfs, js
