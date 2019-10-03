@@ -2,6 +2,13 @@
 
   "blog-posts": [{
     "type": "notebook",
+    "date": "2019-10-03",
+    "path": "Scoping-Things-Out",
+    "title": "Scoping Things Out",
+    "description": "Exploring JavaScripts scope model and use of identifiers",
+    "keywords": "katie clark, javascript, var, let, const, block scope"
+  },{
+    "type": "notebook",
     "date": "2018-10-22",
     "path": "Quirky-JavaScripts-Type-Coercion-and-Comparison-Operators",
     "title": "Quirky JavaScripts",
