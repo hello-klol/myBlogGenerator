@@ -1,3 +1,5 @@
+"use strict"
+
 const fs = require('fs-extra')
 const path = require('path')
 const find = require('find')
@@ -6,7 +8,7 @@ const moment = require('moment')
 const cheerio = require('cheerio')
 
 
-var postTemplate = fs.readFileSync(path.join(__dirname,'templates/post.mustache')).toString()
+const postTemplate = fs.readFileSync(path.join(__dirname,'templates/post.mustache')).toString()
 Mustache.parse(postTemplate)
 
 
@@ -26,7 +28,7 @@ function getPartialTemplate(partialFileName) {
 
 function addPartialTemplate(obj, partialFileName) {
   return Object.assign(obj, {
-    [partialFileName]: getPartialTemplate(partialFileName) 
+    [partialFileName]: getPartialTemplate(partialFileName)
   });
 }
 // Convert array of partial filenames into object containing templates
@@ -37,24 +39,24 @@ const partials = partialFiles.reduce(addPartialTemplate, {})
 // Generate blog posts
 console.log('Generating blog posts...')
 const generator = partials => template => (obj, i, arr) => {
-  prev = arr[i+1]
-  next = arr[i-1]
+  let prev = arr[i+1]
+  let next = arr[i-1]
 
   // Content might be .html or .md - need to convert if .md
-  inputPath  = path.join(__dirname, 'source', 'blog',   obj.path, 'index.html')
+  let inputPath  = path.join(__dirname, 'source', 'blog',   obj.path, 'index.html')
   // TODO: find index and maybe convert
   // Hosted path is based on date published:
-  var datePath = obj.date.replace(/-/g,'/')
-  console.log(datePath)
-  outputPath = path.join(__dirname, 'public', datePath, obj.path, 'index.html')
-  
-  var content = fs.readFileSync(inputPath).toString()
+  const datePath = obj.date.replace(/-/g,'/')
+  // console.log(datePath)
+  let outputPath = path.join(__dirname, 'public', datePath, obj.path, 'index.html')
+
+  let content = fs.readFileSync(inputPath).toString()
   if (obj.type=='notebook') {
     const $ = cheerio.load(content)
     content = '<div class="notebook">' + $('div#notebook').html() + '</div>'
   }
 
-  var output = Mustache.render(template, Object.assign(obj, {
+  const output = Mustache.render(template, Object.assign(obj, {
     content,
     'date-path' : path.join(datePath, obj.path),
     'prev-path' : (typeof prev !== 'undefined')?path.join('/',prev.date.replace(/-/g,'/'), prev.path):undefined,
@@ -74,18 +76,32 @@ const postGenerator = makeGenerator(postTemplate)
 const posts = require('./blog-posts.json')
 posts['blog-posts'].map(postGenerator)
 
+
+
+
 // Generate archive page
+
 console.log('Generating archive page')
-var blogPosts = posts['blog-posts'].map(obj => Object.assign(obj, {
-  datePath: path.join('/', obj.date.replace(/-/g,'/'), obj.path),
-  shortDate: moment(obj.date).format('MM-DD')
-}))
 
-
-var archiveTemplate = fs.readFileSync(path.join(__dirname,'templates/archive.mustache')).toString()
+const archiveTemplate = fs.readFileSync(path.join(__dirname,'templates/archive.mustache')).toString()
 Mustache.parse(archiveTemplate)
 
-var archivePage = Mustache.render(archiveTemplate, {'title':'Archives', 'blog-posts':blogPosts}, partials) 
+const postSummary = posts['blog-posts'].map(obj => Object.create({
+  title: obj.title,
+  datePath: path.join('/', obj.date.replace(/-/g,'/'), obj.path),
+  shortDate: moment(obj.date).format('MM-DD'),
+  year: moment(obj.date).format('YYYY')
+}))
 
-fs.outputFileSync(path.join(__dirname, 'public', 'archives', 'index.html'), 
+// TODO: Seems like a pretty convulated way to get distinct years and split posts
+const years = [...new Set(postSummary.map(post => post.year))]
+
+let blogsByYear = years.map(y =>  Object.create({
+  'archive-year' : y,
+  'blog-posts' : postSummary.filter((v, i, a) => v.year === y)
+}))
+
+const archivePage = Mustache.render(archiveTemplate, {'title':'Archives', 'archive-years':blogsByYear}, partials)
+
+fs.outputFileSync(path.join(__dirname, 'public', 'archives', 'index.html'),
   archivePage)
